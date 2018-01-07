@@ -13,3 +13,10 @@
 				(room ?rid ?rnum) (reservation ?reid ?renum ?init ?final) 
 				(not (room-occupied ?rid ?init))))
 		:effect (and (room-assign ?rid ?reid) (room-occupied ?rid ?init)) 
+	
+	(:action deassing
+		:parameters (?rid ?rnum ?reid ?renum ?init ?final)
+		:precondition (and
+				(room ?rid ?rnum) (reservation ?reid ?renum ?init ?final) 
+				(room-occupied ?rid ?init) (room-assign ?rid ?reid))
+		:effect (and (not (room-assign ?rid ?reid)) (not room-occupied ?rid ?init)))
