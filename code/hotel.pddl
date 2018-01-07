@@ -1,6 +1,6 @@
 ;; en assign realmente se tiene que comprobar que la habitacion no está ocupada ninguno
 ;; de los dias, de momento solo compruebo que no está ocupada el primero, habrá que hacer un forall o algo
-
+;; tambien hace falata comprobar que el numero de gente cabe en la habitacion, un smaller or equal than
 (define (domain strips-hotel)
 	(:requirements :strips)
 	(:predicates
