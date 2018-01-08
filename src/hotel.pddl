@@ -4,20 +4,27 @@
 ;; También hace falata comprobar que el numero de gente cabe en la habitacion, un smaller or equal than.
 
 (define (domain strips-hotel)
-    (:requirements :strips)
+    (:requirements [:strips] [:equality] [:typing] [:adl])
+    (:types
+        ROOM
+        RESERVATION
+        DAY
+    )
     (:predicates
-        (room ?id ?size)
-        (reservation ?id ?size ?init ?final)
-        (room-occupied ?id ?day) 
-        (days-in ?d ?init ?final)
-        (room-assign ?room_id ?reservation_id))
+        (size ?room - ROOM) ; size of the room
+        (free ?room - ROOM ?day - DAY) ; true if ROOM room is free in DAY day
+        (size ?reservation - RESERVATION) ; amount of people for the reservation
+        (init ?reservation - RESERVATION) ; initial DAY for the reservation
+        (days ?reservation - RESERVATION) ; total amount of days for the reservation
+        (sat  ?reservation - RESERVATION) ; true if reservation is satisfied
+    )
         
     (:action assign
-        :parameters (?room_id ?room_size ?reservation_id ?reservation_size ?init ?final)
-        :precondition 
+        :parameters (?room - ROOM ?reservation - RESERVATION)
+        :precondition
             (and
-                (room ?room_id ?room_size)
-                (reservation ?reservation_id ?reservation_size ?init ?final) 
+                forall (free)
+                (RESERVATION ?reservation_id ?reservation_size ?init ?final) 
                 (not (room-occupied ?room_id ?init))
             )
         :effect 
@@ -32,8 +39,8 @@
         :parameters (?room_id ?room_size ?reservation_id ?reservation_size ?init ?final)
         :precondition 
             (and
-                (room ?room_id ?room_size)
-                (reservation ?reservation_id ?reservation_size ?init ?final) 
+                (ROOM ?room_id ?room_size)
+                (RESERVATION ?reservation_id ?reservation_size ?init ?final) 
                 (room-occupied ?room_id ?init)
                 (room-assign ?room_id ?reservation_id)
             )
