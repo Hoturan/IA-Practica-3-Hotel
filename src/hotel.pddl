@@ -1,8 +1,3 @@
-;; TODO
-;; En assign realmente se tiene que comprobar que la habitacion no está ocupada ninguno de los dias,
-;; de momento solo se comprueba que no está ocupada el primero, habrá que hacer un forall o algo parecido.
-;; También hace falata comprobar que el numero de gente cabe en la habitacion, un smaller or equal than.
-
 (define (domain hotel)
     (:requirements :strips :equality :typing :adl)
     (:types
@@ -35,6 +30,17 @@
                     (when (booked ?booking ?day) (not (free ?room ?day)))
                 )
                 (scheduled ?booking - booking)
+            )
+    )
+    (:action unbook
+        :parameters (?room - room ?booking - booking)
+        :precondition (forall (?day - day) (not (booked ?booking ?day)))
+        :effect
+            (and
+                (forall (?day - day) 
+                    (when (booked ?booking ?day) (free ?room ?day))
+                )
+                (not (scheduled ?booking - booking))
             )
     )
 )
