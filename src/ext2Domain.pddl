@@ -1,5 +1,5 @@
 (define (domain hotel)
-    (:requirements :strips :equality :typing :adl)
+    (:requirements :strips :equality :typing :adl :action-costs)
     (:types
         room - item
         booking - item
@@ -8,18 +8,21 @@
     (:functions
         (sizeR ?room - room)
         (sizeB ?booking - booking)
+        (orientationR ?room - room)
+        (orientationB ?booking - booking)
+        (nonOrientedBookings)
     )
     (:predicates
         (free ?room - room ?day - day)
         (scheduled ?booking - booking)
         (booked ?booking - booking ?day - day)
-        (assigned ?booking - booking ?room - room)
     )
-        
-    (:action book
+
+    (:action bookequal
         :parameters (?room - room ?booking - booking)
         :precondition
             (and
+                (= (orientationB ?booking) (orientationR ?room))
                 (not (scheduled ?booking))
                 (>= (sizeR ?room) (sizeB ?booking))
                 (forall (?day - day)
@@ -35,14 +38,14 @@
                     (when (booked ?booking ?day) (not (free ?room ?day)))
                 )
                 (scheduled ?booking)
-                (assigned ?booking ?room)
             )
     )
-
-    (:action unbook
+    
+    (:action book
         :parameters (?room - room ?booking - booking)
         :precondition
             (and
+                (not (= (orientationB ?booking) (orientationR ?room)))
                 (not (scheduled ?booking))
                 (>= (sizeR ?room) (sizeB ?booking))
                 (forall (?day - day)
@@ -55,10 +58,10 @@
         :effect
             (and
                 (forall (?day - day)
-                    (when (booked ?booking ?day) (free ?room ?day))
+                    (when (booked ?booking ?day) (not (free ?room ?day)))
                 )
-                (not (scheduled ?booking))
-                (not (assigned ?booking ?room))
+                (scheduled ?booking)
+                (increase (nonOrientedBookings) 1)
             )
     )
 )
