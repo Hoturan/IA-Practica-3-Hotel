@@ -14,19 +14,23 @@
         (scheduled ?booking - booking)
         (booked ?booking - booking ?day - day)
     )
-        
+
     (:action book
         :parameters (?room - room ?booking - booking)
-        :precondition 
-            (forall (?day - day) 
-                (or
-                    (and (free ?room ?day) (>= (sizeR ?room) (sizeB ?booking)))
-                    (not (booked ?booking ?day))
+        :precondition
+            (and
+                (not (scheduled ?booking))
+                (>= (sizeR ?room) (sizeB ?booking))
+                (forall (?day - day)
+                    (or
+                        (free ?room ?day)
+                        (not (booked ?booking ?day))
+                    )
                 )
             )
         :effect
             (and
-                (forall (?day - day) 
+                (forall (?day - day)
                     (when (booked ?booking ?day) (not (free ?room ?day)))
                 )
                 (scheduled ?booking)
