@@ -11,9 +11,9 @@
         (free room0 day2)
         (free room0 day3)
         (booked book0 day2)
-        (booked book0day3)
-        (= (size room0) 3)
-        (= (size book0) 2)
+        (booked book0 day3)
+        (= (sizeR room0) 3)
+        (= (sizeB book0) 2)
     )
 
-    (:goal (and (forall (?book - book) (scheduled ?book)))))
+    (:goal (and (forall (?book - booking) (scheduled ?book)))))
