@@ -32,10 +32,14 @@
         :effect
             (and
                 (forall (?day - day)
-                    (when (booked ?booking ?day) (not (free ?room ?day)))
+                    (when (booked ?booking ?day)
+                        (and 
+                            (not (free ?room ?day))
+                            (increase (waste) (- (room_size ?room) (book_size ?booking)))
+                        )
+                    )
                 )
                 (scheduled ?booking)
-                (increase (waste) (- (room_size ?room) (book_size ?booking)))
             )
     )
 )
