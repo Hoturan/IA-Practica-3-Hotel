@@ -4,3 +4,5 @@
 src/n-puzzle/*
 src/schedule/*
 src/tsp/*
+
+*/*.pddl.ff
