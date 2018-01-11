@@ -6,11 +6,11 @@
         day - item
     )
     (:functions
-        (sizeR ?room - room)
-        (sizeB ?booking - booking)
-        (orientationR ?room - room)
-        (orientationB ?booking - booking)
-        (nonOrientedBookings)
+        (room_size ?room - room)
+        (book_size ?booking - booking)
+        (room_orientation ?room - room)
+        (book_orientation ?booking - booking)
+        (non_oriented_bookings)
     )
     (:predicates
         (free ?room - room ?day - day)
@@ -22,9 +22,9 @@
         :parameters (?room - room ?booking - booking)
         :precondition
             (and
-                (= (orientationB ?booking) (orientationR ?room))
+                (= (book_orientation ?booking) (room_orientation ?room))
                 (not (scheduled ?booking))
-                (>= (sizeR ?room) (sizeB ?booking))
+                (>= (room_size ?room) (book_size ?booking))
                 (forall (?day - day)
                     (or
                         (free ?room ?day)
@@ -45,9 +45,9 @@
         :parameters (?room - room ?booking - booking)
         :precondition
             (and
-                (not (= (orientationB ?booking) (orientationR ?room)))
+                (not (= (book_orientation ?booking) (room_orientation ?room)))
                 (not (scheduled ?booking))
-                (>= (sizeR ?room) (sizeB ?booking))
+                (>= (room_size ?room) (book_size ?booking))
                 (forall (?day - day)
                     (or
                         (free ?room ?day)
@@ -61,7 +61,7 @@
                     (when (booked ?booking ?day) (not (free ?room ?day)))
                 )
                 (scheduled ?booking)
-                (increase (nonOrientedBookings) 1)
+                (increase (non_oriented_bookings) 1)
             )
     )
 )

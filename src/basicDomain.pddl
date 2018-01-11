@@ -6,8 +6,8 @@
         day - item
     )
     (:functions
-        (sizeR ?room - room)
-        (sizeB ?booking - booking)
+        (room_size ?room - room)
+        (book_size ?booking - booking)
     )
     (:predicates
         (free ?room - room ?day - day)
@@ -20,7 +20,7 @@
         :precondition
             (and
                 (not (scheduled ?booking))
-                (>= (sizeR ?room) (sizeB ?booking))
+                (>= (room_size ?room) (book_size ?booking))
                 (forall (?day - day)
                     (or
                         (free ?room ?day)
