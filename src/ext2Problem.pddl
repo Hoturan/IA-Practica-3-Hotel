@@ -30,9 +30,11 @@
         (= (book_orientation book1) 1)
         (= (book_orientation book2) 1)
         (= (non_oriented_bookings) 0)
+        (= (total_bookings) 0)
     )
 
-    (:goal (and (forall (?book - booking) (scheduled ?book))))
-    
+    (:goal (or (forall (?book - booking) (scheduled ?book))))
+
+    (:metric maximize (total_bookings))
     (:metric minimize (non_oriented_bookings))
 )

@@ -8,6 +8,7 @@
     (:functions
         (room_size ?room - room)
         (book_size ?booking - booking)
+        (total_bookings)
         (room_orientation ?room - room)
         (book_orientation ?booking - booking)
         (non_oriented_bookings)
@@ -38,6 +39,7 @@
                     (when (booked ?booking ?day) (not (free ?room ?day)))
                 )
                 (scheduled ?booking)
+                (increase (total_bookings) 1)
             )
     )
     
@@ -61,6 +63,7 @@
                     (when (booked ?booking ?day) (not (free ?room ?day)))
                 )
                 (scheduled ?booking)
+                (increase (total_bookings) 1)
                 (increase (non_oriented_bookings) 1)
             )
     )
