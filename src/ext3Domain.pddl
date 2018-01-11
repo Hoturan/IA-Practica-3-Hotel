@@ -6,14 +6,14 @@
         day - item
     )
     (:functions
-        (room_size ?room - room)
-        (book_size ?booking - booking)
-        (waste)
+        (room_size ?room - room)                ; size of the room
+        (book_size ?booking - booking)          ; amount of people of the booking
+        (waste)                                 ; total wasted space in rooms
     )
     (:predicates
-        (free ?room - room ?day - day)
-        (scheduled ?booking - booking)
-        (booked ?booking - booking ?day - day)
+        (free ?room - room ?day - day)          ; true iff the room is empty that day
+        (scheduled ?booking - booking)          ; true iff booking is satisfied
+        (booked ?booking - booking ?day - day)  ; true iff booking is for that day
     )
 
     (:action book

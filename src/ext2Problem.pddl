@@ -26,7 +26,7 @@
         (= (book_size book1) 1)
         (= (book_size book2) 1)
         (= (room_orientation room1) 0)
-        (= (room_orientation room2) 0)
+        (= (room_orientation room2) 1)
         (= (book_orientation book1) 1)
         (= (book_orientation book2) 1)
         (= (non_oriented_bookings) 0)
