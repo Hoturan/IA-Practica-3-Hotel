@@ -1,4 +1,4 @@
-(define (problem ext3) (:domain hotel)
+(define (problem ext4) (:domain hotel)
     (:objects
     	room1 - room
     	room2 - room
@@ -26,9 +26,10 @@
         (= (book_size book1) 3)
         (= (book_size book2) 2)
         (= (waste) 0)
+        (= (different_rooms_booked) 0)
     )
 
     (:goal (and (forall (?book - booking) (scheduled ?book))))
 
-    (:metric minimize (waste))
+    (:metric minimize (+ (waste) (different_rooms_booked)))
 )
