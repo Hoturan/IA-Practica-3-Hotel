@@ -23,8 +23,8 @@
         :parameters (?room - room ?booking - booking)
         :precondition
             (and
-                ;(= (book_orientation ?booking) (room_orientation ?room))
-                (not (scheduled ?booking))
+                ;(= (book_orientation ?booking) (room_orientation ?room)) ; must book a room even if it is not
+                (not (scheduled ?booking))                                ; the prefered orientation
                 (>= (room_size ?room) (book_size ?booking))
                 (forall (?day - day)
                     (or
