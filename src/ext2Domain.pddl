@@ -8,7 +8,6 @@
     (:functions
         (room_size ?room - room)                ; size of the room
         (book_size ?booking - booking)          ; amount of people of the booking
-        (waste)                                 ; total wasted space in rooms
         (room_orientation ?room - room)         ; orientation of the room
         (book_orientation ?booking - booking)   ; prefered orientation of the booking
         (non_oriented_bookings)                 ; total of non oriented bookings
@@ -23,8 +22,8 @@
         :parameters (?room - room ?booking - booking)
         :precondition
             (and
-                ;(= (book_orientation ?booking) (room_orientation ?room)) ; must book a room even if it is not
-                (not (scheduled ?booking))                                ; the prefered orientation
+                ;(= (book_orientation ?booking) (room_orientation ?room)) ; must book a room even if it is not the prefered orientation
+                (not (scheduled ?booking))
                 (>= (room_size ?room) (book_size ?booking))
                 (forall (?day - day)
                     (or
