@@ -8,11 +8,11 @@ David Williams Corral
 
 Raul Garía Fuentes
 
-## Dominio
-
 El problema nos situa en un hotel con varias habitaciones, cada habitacion una capacidad de 1 a 4, y varias reservas, también con capacidades diferentes. Nos piden que mediante `PDDL` encontremos la mejor solución, la mejor asignación de las reservas en el hotel en 30 dias. Con extensión el problema se complica.
 
-### Nivel Básico
+## Nivel Básico
+
+### Dominio
 
 Para representar nuestro sistema de reservas del hotel, hemos decidido representar tres tipos necesarios, estos son **habitación** (*room*), **reserva** (*booking*) y **día** (*day*). Todas las soluciones trabajan con solo estos objetos. Las relaciones entre estos tipos son bastante sencillas y triviales:
 
@@ -41,11 +41,21 @@ Con todo esto, solo necesitamos una sola acción: reservar o *book*. Usa `(>= (r
 - Reserva satisfecha: `(scheduled ?booking)`.
 - Para todos los dias de la reserva, la habitación no esta libre: `(forall (?day - day) (when (booked ?booking ?day) (not (free ?room ?day))))`.
 
-### Extensión 1
+### Problema
+
+En el problema nos queremos asegurar que se reserva almenos una habitación. Por eso miramos que para todas las reservas, haya alguna (`or`) satisfecha:
+
+```
+(:goal (or (forall (?book - booking) (scheduled ?book))))
+```
+
+## Extensión 1
 
 En esta extensión se pide una optimización que, o bien ya hemos hecho con el nivel bàsico, o no sabemos encontrar.
 
-### Extensión 2
+## Extensión 2
+
+### Dominio
 
 En esta extensión se pide una optimización que, o bien ya hemos hecho con el nivel bàsico, o no sabemos encontrar.
 
@@ -63,15 +73,34 @@ Obviamente también ha hecho falta modificar la acción de book, pero no ha hech
 (when (not (= (book_orientation ?booking) (room_orientation ?room))) (increase (non_oriented_bookings) 1))
 ```
 
-En el problema se usa `Metric-FF` para minimizar el numero de reservas con una orientación incorrecta (no preferida por el huésped): `(:metric minimize (non_oriented_bookings))`.
+En el problema se usa `Metric-FF` para minimizar el numero de reservas con una orientación incorrecta (no preferida por el huésped):
 
-### Extensión 3
+```
+(:goal (and (forall (?book - booking) (scheduled ?book))))
+(:metric minimize (non_oriented_bookings))
+```
+
+## Extensión 3
+
+### Dominio
 
 Ahora nos deshacemos de la orientación de la habitación, pero intentamos reducir las plazas despediciadas. Una habitación para 4 personas con solo una persona nos supone un *waste* de plazas. Y esa es la función que utilizaremos. Que almacena el número total de plazas desperdiciadas, número que queremos minimizar.
 
-En el efecto de la acción de reservar añadimos un incremento al waste `(increase (waste) (- (room_size ?room) (book_size ?booking)))` para cada dia que se hace la reserva `(forall (?day - day) (when (booked ?booking ?day) ... ))`. Vamos a querer minimizar *waste*, así que volvemos a usar `Metric-FF`: `(:metric minimize (waste))`.
+En el efecto de la acción de reservar añadimos un incremento al waste `(increase (waste) (- (room_size ?room) (book_size ?booking)))` para cada dia que se hace la reserva `(forall (?day - day) (when (booked ?booking ?day) ... ))`.
 
-### Extensión 4
+### Problema
+
+Vamos a querer minimizar *waste*, así que volvemos a usar `Metric-FF`:
+
+```
+(:goal (and (forall (?book - booking) (scheduled ?book))))
+(:metric minimize (waste))
+```
+
+
+## Extensión 4
+
+### Dominio
 
 Finalmente, en esta extensión queremos abrir el mínimo posible de habitaciones. Por delante de el despedicio de plazas. Para este problema añadimos una nueva función y un nuevo predicado:
 
@@ -83,9 +112,14 @@ Finalmente, en esta extensión queremos abrir el mínimo posible de habitaciones
 (used ?room - room)         ; true iff room is booked at least once
 ```
 
-Cada vez que se haga una reserva en una habitación `not used`, sin haberse utilizado antes, incrementaremos el valor de las habitación utilizadas, o `different_rooms_booked`. El problema que encontramos es que se le esta dando el mismo valor a un plaza desperdiciada que a una habitación usada. Por eso en el problema tenemos en cuenta esto y se multiplica por una constante el numero de habitaciones utilizadas.
+Cada vez que se haga una reserva en una habitación `not used`, sin haberse utilizado antes, incrementaremos el valor de las habitación utilizadas, o `different_rooms_booked`.
+
+### Problema
+
+El problema que encontramos es que se le esta dando el mismo valor a un plaza desperdiciada que a una habitación usada. Por eso en el problema tenemos en cuenta esto y se multiplica por una constante el numero de habitaciones utilizadas.
 
 ```
+(:goal (and (forall (?book - booking) (scheduled ?book))))
 (:metric minimize (+ (waste) (* (different_rooms_booked) 90))
 ```
 
