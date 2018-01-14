@@ -43,6 +43,10 @@ Con todo esto, solo necesitamos una sola acción: reservar o *book*. Usa `(>= (r
 
 ### Problema
 
+Para modelar el problema definimos una serie de objetos, definiendo su nombre un guión y su tipo, y luego los inicializamos. En nuestro problemas definimos la cantidad de habitaciones de la manera *roomX - room* siendo X el número de habitación. Lo mismo con las reservas, las declaramos como *bookXY - booking* de manera que X número de reserva y Y es el número de personas en la reserva. También declaramos los dias que durará nuestro problema de la manera *dayX - day* siendo X el número del dia (del 1 al 30).
+
+La inicialización de estos objetos consiste básicamente en colocar las habitaciones en un estado inicial de libre, inicializar los predicados booked con el dia que la reserva X quiere reservar. Declarar el tamaño de cada habitación de la siguiente manera `(= (room_size roomX) Y)` y asi mismo declarar el tamaño de la reserva `(= (book_size bookXY) Y)`.
+
 En el problema nos queremos asegurar que se reserva almenos una habitación. Por eso miramos que para todas las reservas, haya alguna (`or`) satisfecha:
 
 ```
