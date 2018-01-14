@@ -127,7 +127,40 @@ El problema que encontramos es que se le esta dando el mismo valor a un plaza de
 (:metric minimize (+ (waste) (* (different_rooms_booked) 90))
 ```
 
-¿Porque 90? Es el maximo despedicio que puede generar una reserva: Una reserva del 1 al 30 (30 días) de una sola persona en una habitación de 4 plazas. Esto es: `(4 plazas - 1 persona) * 30 días =  90 plazas despediciadas`. 
+¿Porque 90? Es el maximo despedicio que puede generar una reserva: Una reserva del 1 al 30 (30 días) de una sola persona en una habitación de 4 plazas. Esto es: `(4 plazas - 1 persona) * 30 días =  90 plazas despediciadas`.
+
+## Ejecución de la pràctica
+
+Para ejecutar esta práctica se necesita **Metric-FF**. Nos ha costado mucho conseguir ejecutar código, ya que este compilador solo nos funcionaba en los ordenadores de la universidad.
+
+```
+# dentro de Metric-FF/
+./ff -o <path_al_dominio>/basicDomain.pddl -f <path_al_problema>/basicProblem.pddl -O
+```
+
+## Problemas de prueba
+
+Los problemas disponibles són muy sencillos.
+
+### Nivel básico
+
+Para el nivel báscio tenemos 10 reservas, cada una un dia diferente, para una persona, y 10 reservas más, cada una un dia diferente, para dos personas. También disponemos de dos habitaciones, una de dos plazas y otra de solo una. Solo hace falta comprobar que no hay ninguna reserva de dos personas en la habitación de una plaza.
+
+### Extensión 2
+
+Aqui influye la orientación. Por eso hemos creado dos reservas, prefeindo la orientación 1. Estas son en dias diferentes, no se solapan. También tenemos dos habitaciones, totalmente libres, pero una con orientación 1 y otra con orientación 0. Al ejecutarlo vemos que la habitación con orientación 0 se queda sin reservas.
+
+### Extensión 3
+
+En este caso, queremos observar como se reduce el desperdicio, así que creamos dos habitaciones, una con capacidad para 2 personas y otra para 3. También creamos dos reservas que no se solapan entre ellas, una con 2 personas y otra con 3. Hay que ver como encajan las reservas con las habitaciones. La reserva de 2 personas nunca irá a la habitación de 3.
+
+### Extensión 4
+
+Éste problema es igual que el anterior, pero queremos ver como da un resultado diferente. ¿Porque tendria que dar un resultado diferente? En la extension 3 se abrian 2 habitaciones para tener desperdicio 0. Ahora preferimos no habrir una habitacion a tener desperdicio. Así pues, tras ejecutar, vemos que la reserva de 2 personas acaba en la habitación de 3 plazas. La habitación de 2 plazas no se usa nunca.
+
+
+
+
 
 
 
