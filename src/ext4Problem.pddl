@@ -31,5 +31,5 @@
 
     (:goal (and (forall (?book - booking) (scheduled ?book))))
 
-    (:metric minimize (+ (waste) (different_rooms_booked)))
+    (:metric minimize (+ (waste) (* (different_rooms_booked) 90))
 )

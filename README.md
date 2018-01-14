@@ -21,7 +21,7 @@ Para representar nuestro sistema de reservas del hotel, hemos decidido represent
 
 A partir de estas dos sentencias sacamos dos predicados básicos, pero necesitamos uno mas para saber si una reserva se ha satisfecho, es decir, ya está procesada:
 
-```pddl
+```
 (free ?room - room ?day - day)          ; true iff the room is empty that day
 (booked ?booking - booking ?day - day)  ; true iff booking is for that day
 (scheduled ?booking - booking)          ; true iff booking is satisfied
@@ -31,7 +31,7 @@ El predicado ***free*** es cierto si la habitación esta libre ese dia. El predi
 
 Para poder asignar una reserva a una habitación y que no haya problemas con la capacidad y el número de huéspedes, usamos dos funciones para obtener el *tamaño* de la habitación y la reserva:
 
-```pddl
+```
 (room_size ?room - room)                ; size of the room
 (book_size ?booking - booking)          ; amount of people of the booking
 ```
@@ -51,7 +51,7 @@ En esta extensión se pide una optimización que, o bien ya hemos hecho con el n
 
 Como requerimos añadir nueva información, añadimos funciones. Las funciones nuevas son, la orientación de la habitación, la orientación preferente de la reserva y por último el número total de reservas que se han quedado con un habitación sin su orientación preferente. Se usa un numero para representar la orientación (podria ser: 1 - Norte, 2 - Este, 3 - Sur, 4 - Oeste):
 
-```pddl
+```
 (room_orientation ?room - room)         ; orientation of the room
 (book_orientation ?booking - booking)   ; prefered orientation of the booking
 (non_oriented_bookings)                 ; total of non oriented bookings
@@ -59,11 +59,37 @@ Como requerimos añadir nueva información, añadimos funciones. Las funciones n
 
 Obviamente también ha hecho falta modificar la acción de book, pero no ha hecho falta crear una nueva. Como precondición mira si hay alguna **habitación disponible con la orientación preferente**, libre durante todos los días de la reserva y del tamaño adecuado. También mira si hay alguna habitación disponible que cumpla todos los requerimientos pese a que **no sea de la orientación deseada**. Si la reserva se hace de una habitación que no tiene la orientación deseada se suma uno al número de reservas que no tienen la orientación deseada.
 
-```pddl
+```
 (when (not (= (book_orientation ?booking) (room_orientation ?room))) (increase (non_oriented_bookings) 1))
 ```
 
 En el problema se usa `Metric-FF` para minimizar el numero de reservas con una orientación incorrecta (no preferida por el huésped): `(:metric minimize (non_oriented_bookings))`.
+
+### Extensión 3
+
+Ahora nos deshacemos de la orientación de la habitación, pero intentamos reducir las plazas despediciadas. Una habitación para 4 personas con solo una persona nos supone un *waste* de plazas. Y esa es la función que utilizaremos. Que almacena el número total de plazas desperdiciadas, número que queremos minimizar.
+
+En el efecto de la acción de reservar añadimos un incremento al waste `(increase (waste) (- (room_size ?room) (book_size ?booking)))` para cada dia que se hace la reserva `(forall (?day - day) (when (booked ?booking ?day) ... ))`. Vamos a querer minimizar *waste*, así que volvemos a usar `Metric-FF`: `(:metric minimize (waste))`.
+
+### Extensión 4
+
+Finalmente, en esta extensión queremos abrir el mínimo posible de habitaciones. Por delante de el despedicio de plazas. Para este problema añadimos una nueva función y un nuevo predicado:
+
+```
+; funcion
+(different_rooms_booked)    ; number of rooms booked at least once
+
+; predicate
+(used ?room - room)         ; true iff room is booked at least once
+```
+
+Cada vez que se haga una reserva en una habitación `not used`, sin haberse utilizado antes, incrementaremos el valor de las habitación utilizadas, o `different_rooms_booked`. El problema que encontramos es que se le esta dando el mismo valor a un plaza desperdiciada que a una habitación usada. Por eso en el problema tenemos en cuenta esto y se multiplica por una constante el numero de habitaciones utilizadas.
+
+```
+(:metric minimize (+ (waste) (* (different_rooms_booked) 90))
+```
+
+¿Porque 90? Es el maximo despedicio que puede generar una reserva: Una reserva del 1 al 30 (30 días) de una sola persona en una habitación de 4 plazas. Esto es: `(4 plazas - 1 persona) * 30 días =  90 plazas despediciadas`. 
 
 
 

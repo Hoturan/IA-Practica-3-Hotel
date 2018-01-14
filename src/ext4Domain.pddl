@@ -44,7 +44,7 @@
                 (scheduled ?booking)
                 (when (not (used ?room))
                     (and
-                        (increase (different_rooms_booked) 10)
+                        (increase (different_rooms_booked) 1)
                         (used ?room)
                     )
                 )
