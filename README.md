@@ -2,11 +2,7 @@
 
 *Inteligencia Artificial*
 
-Fèlix Arribas Pardo
-
-David Williams Corral
-
-Raúl García Fuentes
+**Fèlix Arribas Pardo**, **David Williams Corral** y **Raúl García Fuentes**
 
 El problema nos situa en un hotel con varias habitaciones, cada habitacion tiene una capacidad de 1 a 4, y varias reservas, también con capacidades diferentes. Nos piden que mediante `PDDL` encontremos la mejor solución, la mejor asignación de las reservas de habitaciones en el hotel en 30 dias. El problema es cada vez más complejo a medida que implementamos las 4 extensiones.
 
@@ -22,9 +18,14 @@ Para representar nuestro sistema de reservas del hotel hemos decidido representa
 A partir de estas dos sentencias sacamos dos predicados básicos, pero necesitamos uno mas para saber si una reserva se ha realizado, es decir, ya está procesada:
 
 ```
-(free ?room - room ?day - day)          ; true iff the room is empty that day
-(booked ?booking - booking ?day - day)  ; true iff booking is for that day
-(scheduled ?booking - booking)          ; true iff booking is satisfied
+; true iff the room is empty that day
+(free ?room - room ?day - day)
+
+; true iff booking is for that day
+(booked ?booking - booking ?day - day)
+
+; true iff booking is satisfied
+(scheduled ?booking - booking)
 ```
 
 El predicado ***free*** es cierto si la habitación esta libre ese dia. El predicado ***booked*** es cierto si la reserva se ha cumplido para ese dia. El predicado ***scheduled*** es cierto si la reserva se ha satisfecho.
@@ -32,8 +33,11 @@ El predicado ***free*** es cierto si la habitación esta libre ese dia. El predi
 Para poder asignar una reserva a una habitación y que no haya problemas con la capacidad y el número de huéspedes, usamos dos funciones para obtener el *tamaño* de la habitación y el número de huéspede de la reserva:
 
 ```
-(room_size ?room - room)                ; size of the room
-(book_size ?booking - booking)          ; amount of people of the booking
+; size of the room
+(room_size ?room - room)
+
+; amount of people of the booking
+(book_size ?booking - booking)
 ```
 
 Con todo esto, sólo necesitamos una acción: reservar (o *book*). Usa `(>= (room_size ?room) (book_size ?booking)` y comprueba como precondición que, para toda la duración de la reserva la habitación esté libre. También tine en cuenta que la reserva no esté satisfecha ya. Esta acción solo necesita dos parámetros: `(?room - room ?booking - booking)`. Finalmente el efecto que tiene sobre el hotel es:
@@ -66,15 +70,21 @@ En esta extensión se pide una optimización que, o bien ya hemos hecho con el n
 Como requerimos añadir nueva información, añadimos funciones. Las funciones nuevas son, la orientación de la habitación, la orientación preferente de la reserva y por último el número total de reservas que se han quedado con un habitación sin su orientación preferente. Se usa un número para representar la orientación (podria ser: 1 - Norte, 2 - Este, 3 - Sur, 4 - Oeste):
 
 ```
-(room_orientation ?room - room)         ; orientation of the room
-(book_orientation ?booking - booking)   ; prefered orientation of the booking
-(non_oriented_bookings)                 ; total of non oriented bookings
+; orientation of the room
+(room_orientation ?room - room)
+
+; prefered orientation of the booking
+(book_orientation ?booking - booking)
+
+; total of non oriented bookings
+(non_oriented_bookings)
 ```
 
 Obviamente también ha hecho falta modificar la acción de book, pero no ha hecho falta crear una nueva. Como precondición mira si hay alguna **habitación disponible con la orientación preferente** libre durante todos los días de la reserva y del tamaño adecuado. También mira si hay alguna habitación disponible que cumpla todos los requisitos pese a que **no sea de la orientación deseada**. Si se realiza una reserva cuya habitación no tiene la orientación deseada se suma uno al número de reservas que no tienen la orientación deseada.
 
 ```
-(when (not (= (book_orientation ?booking) (room_orientation ?room))) (increase (non_oriented_bookings) 1))
+(when (not (= (book_orientation ?booking) (room_orientation ?room)))
+    (increase (non_oriented_bookings) 1))
 ```
 
 En el problema se usa `Metric-FF` para minimizar el numero de reservas con una orientación incorrecta (no preferida por el huésped):
@@ -109,11 +119,11 @@ Vamos a querer minimizar *waste*, así que volvemos a usar `Metric-FF`:
 Finalmente, en esta extensión queremos abrir el mínimo posible de habitaciones. Por delante de el desperdicio de plazas. Para este problema añadimos una nueva función y un nuevo predicado:
 
 ```
-; funcion
-(different_rooms_booked)    ; number of rooms booked at least once
+; function: number of rooms booked at least once
+(different_rooms_booked)
 
-; predicate
-(used ?room - room)         ; true iff room is booked at least once
+; predicate: true iff room is booked at least once
+(used ?room - room)
 ```
 
 Cada vez que se haga una reserva en una habitación `not used`, sin haberse utilizado antes, incrementaremos el valor de las habitaciones utilizadas, o `different_rooms_booked`.
@@ -135,7 +145,7 @@ Para ejecutar esta práctica se necesita **Metric-FF**. Nos ha costado mucho con
 
 ```
 # dentro de Metric-FF/
-./ff -o <path_al_dominio>/basicDomain.pddl -f <path_al_problema>/basicProblem.pddl -O
+./ff -o <path>/basicDomain.pddl -f <path>/basicProblem.pddl -O
 ```
 
 ## Problemas de prueba
